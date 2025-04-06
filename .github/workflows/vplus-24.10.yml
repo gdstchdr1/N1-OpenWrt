@@ -118,7 +118,18 @@ jobs:
           IP: 192.168.5.8
           账户: root
           密码: password
-
+          
+    - name: 发送 Telegram 通知
+       env:
+         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+       run: |
+         MESSAGE="✅ vplus固件编译成功 🎉\n📅 日期: $(date '+%Y-%m-%d %H:%M:%S')"
+         curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+           -d chat_id="$TELEGRAM_CHAT_ID" \
+           -d parse_mode="Markdown" \
+           -d text="$MESSAGE"
+            
     - name: Delete old releases
       uses: dev-drprasad/delete-older-releases@master
       env:
