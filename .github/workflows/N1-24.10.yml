@@ -90,6 +90,12 @@ jobs:
         make -j$(nproc) || make -j1 || make -j1 V=s
         echo "compile_status=success" >> $GITHUB_ENV
 
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@main
+      with:
+        name: OpenWrt_rootfs_${{ env.build_date }}
+        path: openwrt/bin
+
     - name: Package armsr as openwrt
       if: ${{ env.compile_status }} == 'success' && !cancelled()
       uses: unifreq/openwrt_packit@master
@@ -115,10 +121,21 @@ jobs:
         body: |
           首次使用建议全新刷写
           * 基本信息
-          IP: 192.168.2.2
+          IP: 192.168.5.8
           账户: root
           密码: password
-
+          
+    - name: 发送 Telegram 通知
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        MESSAGE="✅ N1 固件编译成功 🎉\n📅 日期: $(date '+%Y-%m-%d %H:%M:%S')"
+        curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+           -d chat_id="$TELEGRAM_CHAT_ID" \
+           -d parse_mode="Markdown" \
+           -d text="$MESSAGE"
+           
     - name: Delete old releases
       uses: dev-drprasad/delete-older-releases@master
       env:
