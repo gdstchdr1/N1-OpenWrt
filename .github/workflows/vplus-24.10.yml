@@ -90,6 +90,12 @@ jobs:
         make -j$(nproc) || make -j1 || make -j1 V=s
         echo "compile_status=success" >> $GITHUB_ENV
 
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@main
+      with:
+        name: OpenWrt_rootfs_${{ env.build_date }}
+        path: openwrt/bin
+
     - name: Package armsr as openwrt
       if: ${{ env.compile_status }} == 'success' && !cancelled()
       uses: unifreq/openwrt_packit@master
