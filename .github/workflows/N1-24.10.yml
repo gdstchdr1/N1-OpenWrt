@@ -124,7 +124,7 @@ jobs:
           IP: 192.168.10.219
           账户: root
           密码: password
-          
+
     - name: 发送 Telegram 通知
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -136,11 +136,11 @@ jobs:
            -d parse_mode="Markdown" \
            -d text="$MESSAGE"
 
-      - name: 删除旧的 Workflow Runs（保留最近 4 次）
-        env:
+    - name: 删除旧的 Workflow Runs（保留最近 4 次）
+      env:
           GH_PAT: ${{ secrets.GH_PAT }}
           REPO: ${{ github.repository }}
-        run: |
+      run: |
           echo "📥 获取 workflow_id..."
           workflow_file=$(basename "${{ github.workflow }}")
           workflow_id=$(curl -s -H "Authorization: token $GH_PAT" \
