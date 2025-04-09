@@ -3,6 +3,7 @@
 # Add packages
 git clone https://github.com/ophub/luci-app-amlogic --depth=1 clone/amlogic
 git clone https://github.com/xiaorouji/openwrt-passwall --depth=1 clone/passwall
+git clone https://github.com/nikkinikki-org/OpenWrt-nikki/luci-app-nikki --depth=1 clone/nikki
 
 # Update packages
 rm -rf feeds/luci/applications/luci-app-passwall
