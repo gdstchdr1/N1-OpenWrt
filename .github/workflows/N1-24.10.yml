@@ -106,7 +106,7 @@ jobs:
         PACKAGE_SOC: diy
         GZIP_IMGS: .xz
         SCRIPT_DIY_PATH: N1/mk_s905d_n1.sh
-        WHOAMI: nantayo
+        WHOAMI: Lounger
         SW_FLOWOFFLOAD: 0
         SFE_FLOW: 0
 
@@ -136,7 +136,7 @@ jobs:
            -d parse_mode="Markdown" \
            -d text="$MESSAGE"
 
-    - name: 删除旧的 Workflow Runs（保留最近 4 次）
+    - name: 删除旧的 Workflow Runs（保留最近 3 次）
       env:
           GH_PAT: ${{ secrets.GH_PAT }}
           REPO: ${{ github.repository }}
@@ -153,10 +153,10 @@ jobs:
             exit 1
           fi
 
-          echo "🔄 获取运行历史（保留最近 4 个）..."
+          echo "🔄 获取运行历史（保留最近 3 个）..."
           run_ids=$(curl -s -H "Authorization: token $GH_PAT" \
             "https://api.github.com/repos/$REPO/actions/workflows/$workflow_id/runs?per_page=100" | \
-            jq '.workflow_runs | .[4:] | .[].id')
+            jq '.workflow_runs | .[3:] | .[].id')
 
           echo "🗑️ 删除旧 Workflow Runs..."
           for run_id in $run_ids; do
