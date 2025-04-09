@@ -140,23 +140,31 @@ jobs:
       env:
           GH_PAT: ${{ secrets.GH_PAT }}
           REPO: ${{ github.repository }}
+          WORKFLOW_NAME: ${{ github.workflow }}
       run: |
-          echo "📥 获取 workflow_id..."
-          workflow_file=$(basename "${{ github.workflow }}")
+          echo "📥 查找 workflow_id（按名称匹配）..."
           workflow_id=$(curl -s -H "Authorization: token $GH_PAT" \
-            https://api.github.com/repos/$REPO/actions/workflows/$workflow_file | jq .id)
+            https://api.github.com/repos/$REPO/actions/workflows | \
+            jq --arg name "$WORKFLOW_NAME" '.workflows[] | select(.name == $name) | .id')
+
+          echo "workflow_id: $workflow_id"
+          if [ -z "$workflow_id" ]; then
+            echo "❌ 无法找到 workflow_id，退出..."
+            exit 1
+          fi
 
           echo "🔄 获取运行历史（保留最近 4 个）..."
           run_ids=$(curl -s -H "Authorization: token $GH_PAT" \
             "https://api.github.com/repos/$REPO/actions/workflows/$workflow_id/runs?per_page=100" | \
             jq '.workflow_runs | .[4:] | .[].id')
 
-          echo "🗑️ 删除旧 Workflow Run..."
+          echo "🗑️ 删除旧 Workflow Runs..."
           for run_id in $run_ids; do
             echo "➡ 删除 run $run_id"
             curl -s -X DELETE -H "Authorization: token $GH_PAT" \
               "https://api.github.com/repos/$REPO/actions/runs/$run_id"
           done
+
 
     - name: Delete old releases
       uses: dev-drprasad/delete-older-releases@master
