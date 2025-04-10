@@ -96,7 +96,7 @@ jobs:
         name: OpenWrt_rootfs_${{ env.build_date }}
         path: openwrt/bin
 
-    - name: Package AArch64 : Cortex-A53 x 4 as openwrt
+    - name: Package AArch64:Cortex-A53x4 as openwrt
       if: ${{ env.compile_status }} == 'success' && !cancelled()
       uses: unifreq/openwrt_packit@master
       env:
