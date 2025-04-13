@@ -1,4 +1,4 @@
-name: Build ImmortalWrt-24.10 for vplus
+name: ImmortalWrt-24.10-for-vplus
 
 on:
   workflow_dispatch:
